@@ -49,19 +49,23 @@ function App() {
     calculateTotalCommitments(newCommitments);
   };
 
-  const handleCommitmentChange = (index: number, field: string, value: any) => {
+  const handleCommitmentChange = <K extends keyof Commitment>(
+    index: number,
+    field: K,
+    value: Commitment[K]
+  ) => {
     const updatedCommitments = [...commitments];
     updatedCommitments[index][field] = value;
     setCommitments(updatedCommitments);
-    localStorage.setItem("commitments", JSON.stringify(updatedCommitments)); 
+    localStorage.setItem("commitments", JSON.stringify(updatedCommitments));
     calculateTotalCommitments(updatedCommitments);
   };
 
   const handleDeleteCommitment = (index: number) => {
     const updatedCommitments = commitments.filter((_, i) => i !== index);
-    console.log(updatedCommitments)
+    console.log(updatedCommitments);
     setCommitments(updatedCommitments);
-    localStorage.setItem("commitments", JSON.stringify(updatedCommitments)); 
+    localStorage.setItem("commitments", JSON.stringify(updatedCommitments));
     calculateTotalCommitments(updatedCommitments);
   };
 
@@ -83,7 +87,7 @@ function App() {
         </h1>
 
         <p className="mb-4">
-          Enter your monthly gross salary and let this app calculate your net
+          Enter your monthly gross salary and let this tool calculate your net
           pay after all standard Malaysian deductions. You can also track your
           monthly commitments and see how much balance you have left.
         </p>
@@ -109,12 +113,14 @@ function App() {
           <option value="0.09">9%</option>
         </select>
 
-        <button
-          onClick={handleCalculate}
-          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-        >
-          Calculate
-        </button>
+        <div className="flex justify-end">
+          <button
+            onClick={handleCalculate}
+            className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+          >
+            Calculate
+          </button>
+        </div>
 
         {result && (
           <>
@@ -141,12 +147,6 @@ function App() {
                     RM {result.eis.toFixed(2)}
                   </span>
                 </li>
-                <li className="flex justify-between">
-                  <span>PCB Contribution</span>
-                  <span className="font-semibold ">
-                    RM {result.pcb.toFixed(2)}
-                  </span>
-                </li>
                 <li className="flex justify-between mt-4 text-lg font-bold">
                   <span>💰 Net Salary:</span>
                   <span className="text-xl text-green-700">
@@ -170,10 +170,11 @@ function App() {
         {/* Disclaimer */}
         <div className="mt-4 text-sm text-gray-500 italic">
           <p>
-            **Disclaimer**: This Track My Gaji is provided for informational and reference
-            purposes only. Actual deductions may vary depending on your specific
-            circumstances and changes in government policies. Please consult
-            with a financial advisor for more accurate calculations.
+            **Disclaimer**: This tool is provided for informational and
+            reference purposes only. Actual deductions may vary depending on
+            your specific circumstances and changes in government policies.
+            Please consult with a financial advisor for more accurate
+            calculations.
           </p>
         </div>
       </main>
