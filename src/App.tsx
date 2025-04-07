@@ -63,7 +63,6 @@ function App() {
 
   const handleDeleteCommitment = (index: number) => {
     const updatedCommitments = commitments.filter((_, i) => i !== index);
-    console.log(updatedCommitments);
     setCommitments(updatedCommitments);
     localStorage.setItem("commitments", JSON.stringify(updatedCommitments));
     calculateTotalCommitments(updatedCommitments);
