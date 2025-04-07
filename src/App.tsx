@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { calculateNetSalary, SalaryBreakdown } from "./utils/salaryCalculator";
+import { Analytics } from "@vercel/analytics/react";
 
 import CommitmentForm from "./components/CommitmentForm";
 import Header from "./components/Header";
@@ -179,6 +180,7 @@ function App() {
       </main>
 
       <Footer />
+      <Analytics />
     </div>
   );
 }
