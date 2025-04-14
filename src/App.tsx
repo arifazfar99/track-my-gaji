@@ -116,7 +116,7 @@ function App() {
         <div className="flex justify-end">
           <button
             onClick={handleCalculate}
-            className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+            className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 cursor-pointer"
           >
             Calculate
           </button>
