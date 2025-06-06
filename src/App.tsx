@@ -147,7 +147,7 @@ function App() {
 
       <main className="sm:max-w-6xl mx-auto p-6 flex-grow space-y-8">
         <section className="flex flex-col w-full justify-center text-center">
-          <h1 className="text-4xl font-bold mb-4 flex items-center justify-center">
+          <h1 className="text-xl sm:text-4xl font-bold mb-4 flex items-center justify-center">
             <span>
               <CgCalculator className="mr-2" />
             </span>
