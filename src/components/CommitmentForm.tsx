@@ -65,7 +65,7 @@ const CommitmentForm: React.FC<CommitmentFormProps> = ({
       <div className="flex justify-end">
         <button
           onClick={onAdd}
-          className="bg-black text-white py-2 px-6 rounded shadow-md hover:bg-gray-700 transition-all duration-300 cursor-pointer"
+          className="bg-black text-white py-2 px-4 rounded shadow-md hover:bg-gray-700 transition-all duration-300 cursor-pointer"
         >
           Add Commitment
         </button>
