@@ -145,7 +145,7 @@ function App() {
     <div className="bg-gray-100 min-h-screen flex flex-col">
       <Header />
 
-      <main className="max-w-6xl mx-auto p-6 flex-grow space-y-8">
+      <main className="sm:max-w-6xl mx-auto p-6 flex-grow space-y-8">
         <section className="flex flex-col w-full justify-center text-center">
           <h1 className="text-4xl font-bold mb-4 flex items-center justify-center">
             <span>
@@ -153,14 +153,14 @@ function App() {
             </span>
             Salary Calculator Malaysia {new Date().getFullYear()}
           </h1>
-          <p className="mb-4 px-60">
+          <p className="mb-4 sm:px-60">
             Calculate your net pay after all standard Malaysian deductions. You
             can also track your monthly commitments and see how much balance you
             have left.
           </p>
         </section>
 
-        <section className="bg-white rounded-2xl shadow-md flex">
+        <section className="bg-white rounded-2xl shadow-md sm:flex">
           <SalaryDetailsForm
             salaryDetails={salaryDetails}
             setSalaryDetails={setSalaryDetails}

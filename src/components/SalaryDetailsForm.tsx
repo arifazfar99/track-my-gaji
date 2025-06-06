@@ -23,7 +23,7 @@ const SalaryDetailsForm = ({
   };
 
   return (
-    <div className="w-1/2 p-7">
+    <div className="sm:w-1/2 p-7">
       <h1 className="font-semibold text-lg mb-4 flex items-center">
         <span>
           <GrMoney className="mr-2" />
