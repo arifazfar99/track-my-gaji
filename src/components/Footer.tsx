@@ -1,15 +1,8 @@
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-gray-900 text-white py-6 mt-12">
-      <div className="max-w-6xl mx-auto flex justify-center">
-        <p className="text-sm">Made by Arif Azfar</p>
-        {/* <a
-          href="https://www.linkedin.com/in/arif-azfar-azri/"
-          target="_blank"
-          className="text-gray-400 hover:text-white mx-3"
-        >
-          LinkedIn
-        </a> */}
+    <footer className="bg-white text-black p-6 shadow">
+      <div className="max-w-6xl mx-auto">
+        <p className="text-sm font-semibold">Made by Arif Azfar</p>
       </div>
     </footer>
   );

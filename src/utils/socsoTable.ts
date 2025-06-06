@@ -1,4 +1,4 @@
-export interface SocsoRange {
+interface SocsoRange {
     min: number;
     max: number;
     employee: number;

@@ -1,52 +1,75 @@
 import { useEffect, useState } from "react";
-import { calculateNetSalary, SalaryBreakdown } from "./utils/salaryCalculator";
 import { Analytics } from "@vercel/analytics/react";
 
 import CommitmentForm from "./components/CommitmentForm";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import SalaryDetailsForm from "./components/SalaryDetailsForm";
+import SalarySummaryTable from "./components/SalarySummaryTable";
+import { calculateNetSalary } from "./utils/salaryCalculator";
 
-interface Commitment {
-  name: string;
-  amount: number;
-}
+import {
+  Commitment,
+  SalaryBreakdown,
+  SalaryDetails,
+  SalarySummary,
+} from "./types";
+
+// icons
+import { CgCalculator } from "react-icons/cg";
 
 function App() {
-  const [gross, setGross] = useState<string>("");
-  const [epfRate, setEpfRate] = useState<string>("0.11");
-  const [result, setResult] = useState<SalaryBreakdown | null>(null);
+  const [salaryDetails, setSalaryDetails] = useState<SalaryDetails>({
+    gross: 0,
+    bonus: 0,
+    epfRate: 0.11,
+    taxCategory: "single",
+    child: 0,
+  });
+
+  const [result, setResult] = useState<SalarySummary | null>(null);
+
   const [commitments, setCommitments] = useState<Commitment[]>([]);
   const [totalCommitments, setTotalCommitments] = useState<number>(0);
 
-  useEffect(() => {
-    const savedGross = localStorage.getItem("grossSalary");
-    const savedEpf = localStorage.getItem("epfRate");
-    const savedCommitments = localStorage.getItem("commitments");
-
-    if (savedGross) setGross(savedGross);
-    if (savedEpf) setEpfRate(savedEpf);
-    if (savedCommitments) {
-      const parsed = JSON.parse(savedCommitments);
-      setCommitments(parsed);
-      calculateTotalCommitments(parsed);
-    }
-  }, []);
-
   const handleCalculate = () => {
-    const grossNum = parseFloat(gross);
-    const epfNum = parseFloat(epfRate);
-    if (!isNaN(grossNum) && !isNaN(epfNum)) {
-      localStorage.setItem("grossSalary", gross);
-      localStorage.setItem("epfRate", epfRate);
-      const breakdown = calculateNetSalary(grossNum, epfNum);
+    const salaryCalculatorData = {
+      salaryDetails: {
+        gross: salaryDetails.gross,
+        bonus: salaryDetails.bonus,
+        epfRate: salaryDetails.epfRate,
+        taxCategory: salaryDetails.taxCategory,
+      },
+      commitments,
+    };
+
+    if (
+      !isNaN(salaryCalculatorData.salaryDetails.gross) &&
+      !isNaN(salaryCalculatorData.salaryDetails.epfRate)
+    ) {
+      localStorage.setItem(
+        "salaryCalculator",
+        JSON.stringify(salaryCalculatorData)
+      );
+      const breakdown = calculateNetSalary(
+        salaryCalculatorData.salaryDetails.gross,
+        salaryCalculatorData.salaryDetails.epfRate
+      );
       setResult(breakdown);
     }
   };
 
   const addCommitment = () => {
-    const newCommitments = [...commitments, { name: "", amount: 0 }];
+    const existingData = JSON.parse(
+      localStorage.getItem("salaryCalculator") || "{}"
+    );
+    const newCommitments = [...commitments, { name: "", amount: 0, note: "" }];
+    const updatedData = {
+      ...existingData,
+      commitments: newCommitments,
+    };
     setCommitments(newCommitments);
-    localStorage.setItem("commitments", JSON.stringify(newCommitments));
+    localStorage.setItem("salaryCalculator", JSON.stringify(updatedData));
     calculateTotalCommitments(newCommitments);
   };
 
@@ -55,17 +78,31 @@ function App() {
     field: K,
     value: Commitment[K]
   ) => {
+    const existingData = JSON.parse(
+      localStorage.getItem("salaryCalculator") || "{}"
+    );
     const updatedCommitments = [...commitments];
     updatedCommitments[index][field] = value;
+    const updatedData = {
+      ...existingData,
+      commitments: updatedCommitments,
+    };
     setCommitments(updatedCommitments);
-    localStorage.setItem("commitments", JSON.stringify(updatedCommitments));
+    localStorage.setItem("salaryCalculator", JSON.stringify(updatedData));
     calculateTotalCommitments(updatedCommitments);
   };
 
   const handleDeleteCommitment = (index: number) => {
+    const existingData = JSON.parse(
+      localStorage.getItem("salaryCalculator") || "{}"
+    );
     const updatedCommitments = commitments.filter((_, i) => i !== index);
+    const updatedData = {
+      ...existingData,
+      commitments: updatedCommitments,
+    };
     setCommitments(updatedCommitments);
-    localStorage.setItem("commitments", JSON.stringify(updatedCommitments));
+    localStorage.setItem("salaryCalculator", JSON.stringify(updatedData));
     calculateTotalCommitments(updatedCommitments);
   };
 
@@ -77,106 +114,70 @@ function App() {
     setTotalCommitments(total);
   };
 
+  useEffect(() => {
+    const data: SalaryBreakdown = JSON.parse(
+      localStorage.getItem("salaryCalculator") || "{}"
+    );
+
+    const savedGross = data?.salaryDetails?.gross;
+    const savedBonus = data?.salaryDetails?.bonus;
+    const savedEpf = data?.salaryDetails?.epfRate;
+    const savedTaxCategory = data?.salaryDetails.taxCategory;
+    const savedCommitments = data.commitments;
+
+    if (savedGross && savedBonus && savedEpf) {
+      setSalaryDetails((prev) => ({
+        ...prev,
+        gross: savedGross,
+        bonus: savedBonus,
+        epfRate: savedEpf,
+        taxCategory: savedTaxCategory,
+      }));
+    }
+
+    if (savedCommitments) {
+      setCommitments(savedCommitments);
+      calculateTotalCommitments(savedCommitments);
+    }
+  }, []);
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="bg-gray-100 min-h-screen flex flex-col">
       <Header />
 
-      <main className="max-w-xl mx-auto p-6 flex-grow">
-        <h1 className="text-4xl font-bold mb-4">
-          Malaysia Salary Deduction & Commitment Tool
-        </h1>
-
-        <p className="mb-4">
-          Enter your monthly gross salary and let this tool calculate your net
-          pay after all standard Malaysian deductions. You can also track your
-          monthly commitments and see how much balance you have left.
-        </p>
-
-        <label className="block mb-2 font-medium">
-          Monthly Gross Salary (RM)
-        </label>
-        <input
-          type="number"
-          value={gross}
-          onChange={(e) => setGross(e.target.value)}
-          placeholder="Enter gross salary"
-          className="border p-2 w-full mb-4 rounded"
-        />
-
-        <label className="block mb-2 font-medium">EPF Contribution Rate</label>
-        <select
-          value={epfRate}
-          onChange={(e) => setEpfRate(e.target.value)}
-          className="border p-2 w-full mb-4 rounded"
-        >
-          <option value="0.11">11%</option>
-          <option value="0.09">9%</option>
-        </select>
-
-        <div className="flex justify-end">
-          <button
-            onClick={handleCalculate}
-            className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 cursor-pointer"
-          >
-            Calculate
-          </button>
-        </div>
-
-        {result && (
-          <>
-            <div className="mt-6 border p-6 rounded-lg shadow-xl bg-white">
-              <h2 className="text-2xl font-semibold mb-4 text-gray-800">
-                Salary Breakdown
-              </h2>
-              <ul className="space-y-2">
-                <li className="flex justify-between">
-                  <span>EPF - Employees Provident Fund</span>
-                  <span className="font-semibold ">
-                    RM {result.epf.toFixed(2)}
-                  </span>
-                </li>
-                <li className="flex justify-between">
-                  <span>SOCSO - Social Security Organisation</span>
-                  <span className="font-semibold ">
-                    RM {result.socso.toFixed(2)}
-                  </span>
-                </li>
-                <li className="flex justify-between">
-                  <span>EIS - Employment Insurance Scheme:</span>
-                  <span className="font-semibold ">
-                    RM {result.eis.toFixed(2)}
-                  </span>
-                </li>
-                <li className="flex justify-between mt-4 text-lg font-bold">
-                  <span>💰 Net Salary:</span>
-                  <span className="text-xl text-green-700">
-                    RM {result.netSalary.toFixed(2)}
-                  </span>
-                </li>
-              </ul>
-            </div>
-
-            <CommitmentForm
-              commitments={commitments}
-              onAdd={addCommitment}
-              onChange={handleCommitmentChange}
-              total={totalCommitments}
-              netSalary={result.netSalary}
-              onDelete={handleDeleteCommitment}
-            />
-          </>
-        )}
-
-        {/* Disclaimer */}
-        <div className="mt-4 text-sm text-gray-500 italic">
-          <p>
-            **Disclaimer**: This tool is provided for informational and
-            reference purposes only. Actual deductions may vary depending on
-            your specific circumstances and changes in government policies.
-            Please consult with a financial advisor for more accurate
-            calculations.
+      <main className="max-w-6xl mx-auto p-6 flex-grow space-y-8">
+        <section className="flex flex-col w-full justify-center text-center">
+          <h1 className="text-4xl font-bold mb-4 flex items-center justify-center">
+            <span>
+              <CgCalculator className="mr-2" />
+            </span>
+            Salary Calculator Malaysia {new Date().getFullYear()}
+          </h1>
+          <p className="mb-4 px-60">
+            Calculate your net pay after all standard Malaysian deductions. You
+            can also track your monthly commitments and see how much balance you
+            have left.
           </p>
-        </div>
+        </section>
+
+        <section className="bg-white rounded-2xl shadow-md flex">
+          <SalaryDetailsForm
+            salaryDetails={salaryDetails}
+            setSalaryDetails={setSalaryDetails}
+            onCalculate={handleCalculate}
+          />
+          <div className="border-r-2 my-7"></div>
+          <SalarySummaryTable result={result} />
+        </section>
+
+        <CommitmentForm
+          commitments={commitments}
+          onAdd={addCommitment}
+          onChange={handleCommitmentChange}
+          total={totalCommitments}
+          netSalary={result?.netSalary || 0}
+          onDelete={handleDeleteCommitment}
+        />
       </main>
 
       <Footer />

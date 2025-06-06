@@ -1,6 +1,4 @@
-// utils/eisTable.ts
-
-export interface EisRange {
+interface EisRange {
     min: number;
     max: number;
     employee: number;
