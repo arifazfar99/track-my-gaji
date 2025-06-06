@@ -29,7 +29,7 @@ const CommitmentForm: React.FC<CommitmentFormProps> = ({
       </h1>
 
       {commitments.map((item, index) => (
-        <div key={index} className="mb-4 flex gap-4 items-center">
+        <div key={index} className="mb-4 flex gap-2 items-center">
           <input
             type="text"
             placeholder="Name"
