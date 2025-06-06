@@ -122,7 +122,7 @@ function App() {
     const savedGross = data?.salaryDetails?.gross;
     const savedBonus = data?.salaryDetails?.bonus;
     const savedEpf = data?.salaryDetails?.epfRate;
-    const savedTaxCategory = data?.salaryDetails.taxCategory;
+    const savedTaxCategory = data?.salaryDetails?.taxCategory;
     const savedCommitments = data.commitments;
 
     if (savedGross && savedBonus && savedEpf) {
