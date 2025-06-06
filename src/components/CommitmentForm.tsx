@@ -1,6 +1,10 @@
+import { Tooltip } from "antd";
+
+import { Commitment } from "../types";
+
 import { TiDeleteOutline } from "react-icons/ti";
 import { PiListChecksFill } from "react-icons/pi";
-import { Commitment } from "../types";
+import { FaInfoCircle } from "react-icons/fa";
 
 interface CommitmentFormProps {
   commitments: Commitment[];
@@ -10,6 +14,10 @@ interface CommitmentFormProps {
   netSalary: number;
   onDelete: (index: number) => void;
 }
+
+const text = `Note: All your commitment details are saved in your browser's local storage.
+        You can revisit this page anytime and your data will still be here — no
+        need to re-enter everything!`;
 
 const CommitmentForm: React.FC<CommitmentFormProps> = ({
   commitments,
@@ -21,12 +29,17 @@ const CommitmentForm: React.FC<CommitmentFormProps> = ({
 }) => {
   return (
     <div className="mt-8 p-6 rounded-2xl shadow-md bg-white">
-      <h1 className="font-semibold text-lg mb-4 flex items-center">
-        <span>
-          <PiListChecksFill className="mr-2" />
-        </span>
-        Your Commitments
-      </h1>
+      <section className="flex justify-between">
+        <h1 className="font-semibold text-lg mb-4 flex items-center">
+          <span>
+            <PiListChecksFill className="mr-2" />
+          </span>
+          Your Commitments
+        </h1>
+        <Tooltip title={text}>
+          <FaInfoCircle />
+        </Tooltip>
+      </section>
 
       {commitments.map((item, index) => (
         <div key={index} className="mb-4 flex gap-2 items-center">

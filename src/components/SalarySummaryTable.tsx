@@ -1,7 +1,7 @@
 import { SalarySummary } from "../types";
+import { Tooltip } from "antd";
 
 // icons
-import { Tooltip } from "antd";
 import { BiDetail } from "react-icons/bi";
 import { FaInfoCircle } from "react-icons/fa";
 
