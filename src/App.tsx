@@ -166,7 +166,7 @@ function App() {
             setSalaryDetails={setSalaryDetails}
             onCalculate={handleCalculate}
           />
-          <div className="border-r-2 my-7"></div>
+          <div className="border-b-2 mx-7 sm:border-r-2 sm:my-7"></div>
           <SalarySummaryTable result={result} />
         </section>
 
